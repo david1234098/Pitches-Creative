@@ -509,16 +509,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 try {
 
                     const formData =
-                        new FormData(contactForm);
+                        new URLSearchParams(new FormData(contactForm));
 
-                    const response =
-                        await fetch(
-                            "/send-message",
-                            {
-                                method: "POST",
-                                body: formData
-                            }
-                        );
+            const response = await fetch("/send-message", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        name: contactForm.name.value,
+        email: contactForm.email.value,
+        message: contactForm.message.value
+    })
+});
+                
 
                     if (!response.ok) {
 
