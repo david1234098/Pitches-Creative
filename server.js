@@ -25,9 +25,8 @@ app.post("/send-message", async (req, res) => {
     try {
         const { data, error } = await resend.emails.send({
     from: "onboarding@resend.dev",
-    to: "D29492731@gmail.com",
+    to: "d29492731@gmail.com",
             subject: `New message from ${name}`,
-            replyTo: email,
             text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
         });
 
