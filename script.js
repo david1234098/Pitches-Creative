@@ -433,130 +433,82 @@ document.addEventListener("DOMContentLoaded", () => {
     /* =========================================
        10. CONTACT FORM
     ========================================= */
+const contactForm = document.getElementById("contactForm");
 
-    const contactForm =
-        document.getElementById("contactForm");
+if (contactForm) {
+    contactForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-    if (contactForm) {
+        const submitButton = contactForm.querySelector(".form-submit");
+        const originalText = submitButton.innerHTML;
 
-        contactForm.addEventListener(
-            "submit",
-            async (event) => {
+        const name = document.getElementById("name");
+        const email = document.getElementById("email");
+        const service = document.getElementById("service");
+        const message = document.getElementById("message");
 
-                event.preventDefault();
+        if (
+            !name ||
+            !email ||
+            !service ||
+            !message ||
+            name.value.trim() === "" ||
+            email.value.trim() === "" ||
+            service.value === "" ||
+            message.value.trim() === ""
+        ) {
+            alert("Please fill in all required fields.");
+            return;
+        }
 
-                const submitButton =
-                    contactForm.querySelector(
-                        ".form-submit"
-                    );
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-                const originalText =
-                    submitButton.innerHTML;
+        if (!emailPattern.test(email.value.trim())) {
+            alert("Please enter a valid email address.");
+            email.focus();
+            return;
+        }
 
-                const name =
-                    document.getElementById("name");
+        submitButton.disabled = true;
+        submitButton.innerHTML = "Sending...";
 
-                const email =
-                    document.getElementById("email");
+        try {
+            const formData = new FormData(contactForm);
 
-                const service =
-                    document.getElementById("service");
-
-                const message =
-                    document.getElementById("message");
-
-                if (
-                    !name ||
-                    !email ||
-                    !service ||
-                    !message ||
-                    name.value.trim() === "" ||
-                    email.value.trim() === "" ||
-                    service.value === "" ||
-                    message.value.trim() === ""
-                ) {
-
-                    alert(
-                        "Please fill in all required fields."
-                    );
-
-                    return;
-                }
-
-                const emailPattern =
-                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-                if (
-                    !emailPattern.test(
-                        email.value.trim()
-                    )
-                ) {
-
-                    alert(
-                        "Please enter a valid email address."
-                    );
-
-                    email.focus();
-
-                    return;
-                }
-
-                submitButton.disabled = true;
-
-                submitButton.innerHTML =
-                    "Sending...";
-
-                try {
-
-                    const formData =
-                        new URLSearchParams(new FormData(contactForm));
-
-            const response = await fetch("/send-message", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        name: contactForm.name.value,
-        email: contactForm.email.value,
-        message: contactForm.message.value
-    })
-});
-                
-
-                    if (!response.ok) {
-
-                        throw new Error(
-                            "Message could not be sent."
-                        );
+            const response = await fetch(
+                "https://formspree.io/f/mgavkqlo",
+                {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        Accept: "application/json"
                     }
-
-                    await response.text();
-
-                    alert(
-                        `Thank you, ${name.value.trim()}! Your message has been sent.`
-                    );
-
-                    contactForm.reset();
-
-                } catch (error) {
-
-                    console.error(error);
-
-                    alert(
-                        "Sorry, your message could not be sent. Please try again."
-                    );
-
-                } finally {
-
-                    submitButton.disabled = false;
-
-                    submitButton.innerHTML =
-                        originalText;
                 }
+            );
+
+            if (!response.ok) {
+                throw new Error("Message could not be sent.");
             }
-        );
-    }
+
+            alert(
+                `Thank you, ${name.value.trim()}! Your message has been sent.`
+            );
+
+            contactForm.reset();
+
+        } catch (error) {
+            console.error(error);
+
+            alert(
+                "Sorry, your message could not be sent. Please try again."
+            );
+
+        } finally {
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalText;
+        }
+    });
+}
 
 
     /* =========================================
